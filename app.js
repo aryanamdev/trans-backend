@@ -1,3 +1,4 @@
+"use strict";
 const express = require("express");
 const multer = require("multer");
 const csvParser = require("csv-parser");
@@ -35,8 +36,8 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       }
 
       const headers = Object.keys(results[0]);
-      const idColumn = headers[0]; // First column is the ID
-      const languageColumns = headers.slice(1); // Remaining columns are language keys
+      const idColumn = headers[0];
+      const languageColumns = headers.slice(1);
 
       languageColumns.forEach((lang, index) => {
         const langDir = path.join(OUTPUT_DIR, lang);
@@ -44,7 +45,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
         const messages = {};
 
         results.forEach((row) => {
-          messages[row[idColumn]] = row[filteredLanguages[index]];
+          messages[row[idColumn]] = row[languageColumns[index]];
         });
 
         fs.writeJsonSync(path.join(langDir, "messages.json"), messages, {

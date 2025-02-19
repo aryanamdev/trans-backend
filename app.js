@@ -15,9 +15,6 @@ app.use(express.json());
 const PORT = 9090;
 const OUTPUT_DIR = "output";
 
-// Mapping of columns to language folder names
-const LANGUAGE_MAP = ["en-US", "ar-AE", "el-GR", "es-ES", "fr-FR", "hi-IN"];
-
 app.post("/upload", upload.single("file"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
@@ -41,13 +38,7 @@ app.post("/upload", upload.single("file"), async (req, res) => {
       const idColumn = headers[0]; // First column is the ID
       const languageColumns = headers.slice(1); // Remaining columns are language keys
 
-      // Ensure we only process the required languages in order
-      const filteredLanguages = languageColumns.filter(
-        (_, index) => index !== 2
-      ); // Skip the fourth column
-      const mappedLanguages = LANGUAGE_MAP.slice(0, filteredLanguages.length);
-
-      mappedLanguages.forEach((lang, index) => {
+      languageColumns.forEach((lang, index) => {
         const langDir = path.join(OUTPUT_DIR, lang);
         fs.ensureDirSync(langDir);
         const messages = {};
